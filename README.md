@@ -25,3 +25,6 @@ To package apps for the local platform:
 ```bash
 yarn package
 ```
+
+# Color Pallete
+https://coolors.co/061e22-489fb5-82c0cc-ede7e3-ff990a

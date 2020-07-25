@@ -1,25 +1,40 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+import { Router } from 'react-router';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { createBrowserHistory } from 'history';
 import { hot } from 'react-hot-loader/root';
-import { History } from 'history';
 import Container from '@material-ui/core/Container';
-import { Store } from '../reducers/types';
+import Grid from '@material-ui/core/Grid';
 import Routes from '../Routes';
+import MainAppBar from '../components/MainAppBar';
+import RootProvider from '../contexts/RootProvider';
+import Theme from './Theme';
 
-type Props = {
-  store: Store;
-  history: History;
-};
+const history = createBrowserHistory();
 
-const Root = ({ store, history }: Props) => (
-  <Provider store={store}>
-    <Container maxWidth="sm">
-      <ConnectedRouter history={history}>
-        <Routes />
-      </ConnectedRouter>
-    </Container>
-  </Provider>
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      flexGrow: 1
+    }
+  })
 );
+
+const Root = () => {
+  const classes = useStyles();
+
+  return (
+    <Theme>
+      <RootProvider>
+        <Router history={history}>
+          <MainAppBar />
+          <Container className={classes.root}>
+            <Routes />
+          </Container>
+        </Router>
+      </RootProvider>
+    </Theme>
+  );
+};
 
 export default hot(Root);

@@ -7,44 +7,12 @@ import {
   stopOne
 } from 'docker-compose';
 import ContainerInformation, { ContainerStatus } from './ContainerInformation';
-import ContainerGroup from './ContainerGroup';
 
-const DockerComposeParser = (searchLocations: string[]) => {
-  const ParseFile = (file: string) => {
-    return {};
-  };
-
-  const FindDockerComposeFiles = (location: string): string[] => {
-    return ['docker-compose.core.yml', 'docker-compose.transaction.yml'];
-  };
-
-  const ParseAll = (locations: string[]) => {
-    const dockerComposeDetails = [];
-    locations.forEach(location => {
-      const files = FindDockerComposeFiles(location);
-      files.forEach(file => {
-        const instance = ParseFile(file);
-        if (instance != null) {
-          dockerComposeDetails.push(instance);
-        }
-      });
-    });
-  };
-
-  ParseAll(searchLocations);
-};
-
-export class DockerServices {
-  cwd: string;
-
+export default class DockerServices {
   options: IDockerComposeOptions;
 
-  constructor(cwd: string) {
-    this.cwd = cwd;
-    this.options = {
-      cwd,
-      config: ['docker-compose.yml']
-    };
+  constructor(options: IDockerComposeOptions) {
+    this.options = options;
   }
 
   async getAllServices(): Promise<string[]> {
@@ -95,10 +63,12 @@ export class DockerServices {
     return !!(serviceStatus && serviceStatus?.length > 0);
   }
 
-  async getServiceInformation(): Promise<ContainerGroup> {
+  async getContainerInformation(
+    containers = new Map<string, ContainerInformation>()
+  ): Promise<Map<string, ContainerInformation>> {
+    console.log('Getting services');
     const allServices = await this.getAllServices();
     const runningServices = await this.getRunningServices();
-    const containerGroup = new ContainerGroup();
 
     allServices.forEach(serviceName => {
       const isRunning = DockerServices.isRunningService(
@@ -106,16 +76,24 @@ export class DockerServices {
         serviceName
       );
 
+      const existingInfo = containers.get(serviceName);
+      if (existingInfo) {
+        existingInfo.Status = isRunning
+          ? ContainerStatus.Started
+          : ContainerStatus.Stopped;
+
+        containers.set(serviceName, existingInfo);
+        return;
+      }
+
       const info: ContainerInformation = {
         Name: serviceName,
         Status: isRunning ? ContainerStatus.Started : ContainerStatus.Stopped,
         Selected: false
       };
-      containerGroup.Services.set(serviceName, info);
+      containers.set(serviceName, info);
     });
 
-    return containerGroup;
+    return containers;
   }
 }
-
-export default DockerComposeParser;

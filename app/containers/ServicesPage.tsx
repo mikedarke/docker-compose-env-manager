@@ -1,39 +1,22 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import routes from '../paths/routes';
+import Grid from '@material-ui/core/Grid';
 import ServiceList from '../components/ServiceList';
-import { RootStateType, DockerComposeConfig } from '../reducers/types';
+import { useEnvironmentContext } from '../contexts/EnvironmentContext';
 
-type Props = {
-  dockerCompose: DockerComposeConfig;
-};
+export default function ServicesPage() {
+  const { environment } = useEnvironmentContext();
+  console.log('Using environment: ', environment);
 
-export function ServicesPage(props: Props) {
-  const { dockerCompose } = props;
   return (
-    <div>
-      <h2>Service List</h2>
-      <ServiceList dockerCompose={dockerCompose} />
-      <Link to={routes.HOME}>Home</Link>
-    </div>
+    <Grid container xs={12} spacing={3}>
+      <Grid item xs={12} sm={12}>
+        <h2>{environment.name}</h2>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {environment.files.map(f => (
+          <ServiceList key={f.FileInfo.path} dockerCompose={f} />
+        ))}
+      </Grid>
+    </Grid>
   );
 }
-
-function mapStateToProps(state: RootStateType) {
-  console.log('State:');
-  console.log(state);
-  return {
-    dockerCompose: state.dockerCompose
-  };
-}
-
-// function mapDispatchToProps(dispatch: Dispatch) {
-//   return bindActionCreators(
-//     {
-//     },
-//     dispatch
-//   );
-// }
-
-export default connect(mapStateToProps)(ServicesPage);

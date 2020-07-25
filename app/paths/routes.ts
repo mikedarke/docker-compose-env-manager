@@ -1,5 +1,5 @@
 export default {
   HOME: '/',
-  COUNTER: '/counter',
-  SERVICES: '/services'
+  SERVICES: '/services',
+  ENVIRONMENT: '/environment'
 };
