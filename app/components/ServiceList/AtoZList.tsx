@@ -23,9 +23,12 @@ export default function AtoZList(props: ServiceListProps) {
   const sortByName = (a: ContainerInformation, b: ContainerInformation) =>
     a.Name <= b.Name ? -1 : 1;
 
+  const filterByName = (container: ContainerInformation) =>
+    filter.length === 0 || container.Name.indexOf(filter) > -1;
+
   const containersList = Array.from(containers.values());
   if (containersList.length <= 0) {
-    return <Typography variant="h3">Loading...</Typography>;
+    return <Typography>Loading...</Typography>;
   }
 
   return (
@@ -41,18 +44,21 @@ export default function AtoZList(props: ServiceListProps) {
       </Grid>
       <Grid xs={12}>
         <List component="nav" aria-label="docker-services">
-          {containersList.sort(sortByName).map(service => (
-            <Paper key={service.Name}>
-              <ServiceListItem
-                containerInfo={service}
-                checked={service.Selected}
-                onSelected={onSelected}
-                onStartStopClicked={onStartStop}
-                onPull={onPull}
-                onBuild={onBuild}
-              />
-            </Paper>
-          ))}
+          {containersList
+            .filter(filterByName)
+            .sort(sortByName)
+            .map(service => (
+              <Paper key={service.Name}>
+                <ServiceListItem
+                  containerInfo={service}
+                  checked={service.Selected}
+                  onSelected={onSelected}
+                  onStartStopClicked={onStartStop}
+                  onPull={onPull}
+                  onBuild={onBuild}
+                />
+              </Paper>
+            ))}
         </List>
       </Grid>
     </Grid>

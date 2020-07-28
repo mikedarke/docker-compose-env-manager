@@ -1,7 +1,9 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import routes from '../paths/routes';
 
@@ -18,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function MainAppBar() {
   const classes = useStyles();
+  const history = useHistory();
 
   return (
     <AppBar position="static">
@@ -29,6 +32,15 @@ export default function MainAppBar() {
           aria-label="menu"
         >
           <MenuIcon />
+        </IconButton>
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="inherit"
+          aria-label="menu"
+          onClick={() => history.push(routes.HOME)}
+        >
+          <HomeIcon />
         </IconButton>
         <Typography variant="h6" color="inherit">
           <Link color="inherit" to={routes.HOME}>

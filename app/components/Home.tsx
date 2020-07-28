@@ -11,7 +11,11 @@ import { useEnvironmentContext } from '../contexts/EnvironmentContext';
 
 export default function Home() {
   const history = useHistory();
-  const { setEnvironment, setConfigPath } = useEnvironmentContext();
+  const {
+    setEnvironment,
+    setConfigPath,
+    environment
+  } = useEnvironmentContext();
 
   const onLoadEnvironment = () => {
     const cfg = new EnvironmentConfigFile();
@@ -43,6 +47,20 @@ export default function Home() {
             <Link to={routes.ENVIRONMENT}>Create new evironment</Link>
           </Button>
         </Grid>
+        {environment !== null ? (
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              href="#contained-buttons"
+            >
+              <Link to={routes.SERVICES}>
+                Back to&nbsp;
+                {environment.name}
+              </Link>
+            </Button>
+          </Grid>
+        ) : null}
       </Grid>
     </div>
   );
