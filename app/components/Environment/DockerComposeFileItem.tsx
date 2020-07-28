@@ -15,7 +15,7 @@ export default function DockerComposeFileItem(props: Props) {
 
   const onNameChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.value;
-    const dcf = new DockerComposeFile(file.FileInfo, name);
+    const dcf = new DockerComposeFile(file.fileName, file.filePath, name);
     setFile(dcf);
     onUpdate(dcf);
   };
@@ -29,11 +29,11 @@ export default function DockerComposeFileItem(props: Props) {
       <TextField
         id="standard-basic"
         label="Group Name"
-        value={file?.Name}
+        value={file?.name}
         onChange={onNameChanged}
       />
       <Typography variant="caption" display="block">
-        {file.FileInfo.path}
+        {file.filePath}
       </Typography>
     </div>
   );

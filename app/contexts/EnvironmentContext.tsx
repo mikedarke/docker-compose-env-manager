@@ -6,22 +6,26 @@ import {
 
 export type EnvironmentContextValue = {
   environment: EnvironmentDefinition;
+  configPath: string;
   setEnvironment: React.Dispatch<React.SetStateAction<EnvironmentDefinition>>;
   saveEnvironment: Function;
+  setConfigPath: Function;
 };
 
 const saveEnvironment = (
   environment: EnvironmentDefinition,
   onSavedCallback: Function
 ) => {
-  const cfgFile = new EnvironmentConfigFile(environment);
-  cfgFile.saveEnvironment(onSavedCallback);
+  const cfgFile = new EnvironmentConfigFile();
+  cfgFile.saveEnvironment(environment, onSavedCallback);
 };
 
 const EnvironmentContext = React.createContext({
   environment: new EnvironmentDefinition(),
+  configPath: '',
   setEnvironment: () => {},
-  saveEnvironment
+  saveEnvironment,
+  setConfigPath: () => {}
 });
 
 export const useEnvironmentContext = () =>
@@ -29,12 +33,15 @@ export const useEnvironmentContext = () =>
 
 export default function EnvironmentContextProvider(props: any) {
   const [environment, setEnvironment] = useState(new EnvironmentDefinition());
+  const [configPath, setConfigPath] = useState('');
   const { children } = props;
 
-  const ctxValue = {
+  const ctxValue: EnvironmentContextValue = {
     environment,
+    configPath,
     setEnvironment,
-    saveEnvironment
+    saveEnvironment,
+    setConfigPath
   };
 
   return (

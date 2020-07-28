@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { createBrowserHistory } from 'history';
 import { hot } from 'react-hot-loader/root';
@@ -26,12 +26,12 @@ const Root = () => {
   return (
     <Theme>
       <RootProvider>
-        <Router history={history}>
+        <BrowserRouter>
           <MainAppBar />
           <Container className={classes.root}>
             <Routes />
           </Container>
-        </Router>
+        </BrowserRouter>
       </RootProvider>
     </Theme>
   );

@@ -40,7 +40,7 @@ export default function DockerComposeFileSelector(props: Props) {
       return;
     }
     const f = event.target.files[0];
-    const dcf = new DockerComposeFile(f, f.name);
+    const dcf = new DockerComposeFile(f.name, f.path, f.name);
     updatedFiles.push(dcf);
     setFiles(updatedFiles);
     // eslint-disable-next-line no-param-reassign
@@ -50,7 +50,7 @@ export default function DockerComposeFileSelector(props: Props) {
   const onFileUpdated = (file: DockerComposeFile) => {
     const updatedFiles = [...files];
     updatedFiles.forEach((f, index) => {
-      if (f.FileInfo.path === file.FileInfo.path) {
+      if (f.filePath === file.filePath) {
         updatedFiles[index] = file;
       }
     });
@@ -63,6 +63,7 @@ export default function DockerComposeFileSelector(props: Props) {
       <input
         type="file"
         id="compose-file"
+        name="compose-file"
         value=""
         onChange={onFileAdded}
         style={displayNone}
@@ -75,7 +76,7 @@ export default function DockerComposeFileSelector(props: Props) {
       {files.length === 0 ? <Typography>No files configured</Typography> : null}
       {files.map(f => (
         <DockerComposeFileItem
-          key={f.FileInfo.path}
+          key={f.filePath}
           dockerComposeFile={f}
           onUpdate={onFileUpdated}
           onRemove={() => {}}

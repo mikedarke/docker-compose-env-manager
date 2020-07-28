@@ -45,15 +45,13 @@ export default function ServiceBar(props: Props) {
     onSelectAllClicked
   } = props;
   const classes = useStyles();
-  const [ allSelected, setAllSelected ] = useState(false);
+  const [allSelected, setAllSelected] = useState(false);
 
   const containerList = Array.from(containers.values());
   const runningCount = containerList.filter(
     c => c.Status === ContainerStatus.Started
   ).length;
   const runningCountMsg = `${runningCount}/${containerList.length} running`;
-
-  const allChecked = false;
 
   return (
     <div className={classes.root}>
@@ -62,7 +60,7 @@ export default function ServiceBar(props: Props) {
           <Checkbox
             edge="start"
             name="All"
-            checked={allChecked}
+            checked={allSelected}
             tabIndex={-1}
             disableRipple
             onChange={() => {

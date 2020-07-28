@@ -1,22 +1,13 @@
-import ContainerInformation from './ContainerInformation';
-
 export default class DockerComposeFile {
-  public FileInfo: File;
+  public fileName: string;
 
-  public FileName: string;
+  public filePath: string;
 
-  public Name: string;
+  public name: string;
 
-  public Services: Map<string, ContainerInformation>;
-
-  constructor(fileInfo: File, name = '') {
-    this.FileInfo = fileInfo;
-    this.FileName = this.FileInfo.name;
-    this.Name = name;
-    this.Services = new Map();
-  }
-
-  public GetServicesList(): ContainerInformation[] {
-    return Array.from(this.Services, ([, value]) => value);
+  constructor(fileName: string, filePath: string, name = '') {
+    this.filePath = filePath;
+    this.fileName = fileName;
+    this.name = name;
   }
 }

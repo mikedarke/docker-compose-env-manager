@@ -1,153 +1,70 @@
-import React, { useState, useEffect, SyntheticEvent } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import Paper from '@material-ui/core/Paper';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Typography from '@material-ui/core/Typography';
+import React, { SyntheticEvent } from 'react';
+import path from 'path';
 import DockerServices from '../../lib/docker-compose';
-import ServiceListItem from './ServiceListItem';
-import ContainerInformation, {
-  ContainerStatus
-} from '../../lib/docker-compose/ContainerInformation';
-import ServiceBar from './ServiceBar';
+import DockerActionsWrapper from './DockerActionsWrapper';
 import DockerComposeFile from '../../lib/docker-compose/DockerComposeFile';
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%'
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular
-  },
-  flexContainer: {
-    flex: 'auto'
-  }
-}));
+import { EnvironmentDefinition } from '../../lib/environments';
+import ServiceViews from './ServiceViews';
 
 export type OnSelectedCallback = (
   event: SyntheticEvent<HTMLButtonElement, Event>
 ) => void;
 
 type Props = {
-  dockerCompose: DockerComposeFile;
+  environment: EnvironmentDefinition;
+  environmentConfigPath: string;
+  view: string;
 };
 
-export default function ServicesList({ dockerCompose }: Props) {
-  const classes = useStyles();
-  const [containers, setContainers] = useState(
-    new Map<string, ContainerInformation>()
-  );
+function getDockerServices(
+  dockerComposeFiles: DockerComposeFile[],
+  environmentConfigPath: string
+) {
+  const files = dockerComposeFiles.map(d => d.filePath);
+  const { dir } = path.parse(environmentConfigPath);
 
-  const [refresh, setRefresh] = useState(0);
-
-  const dockerServices: DockerServices = new DockerServices({
-    cwd: dockerCompose.FileInfo.path.substring(
-      0,
-      dockerCompose.FileInfo.path.lastIndexOf('/')
-    ),
-    config: [dockerCompose.FileInfo.name]
+  return new DockerServices({
+    cwd: dir,
+    config: files
   });
+}
 
-  const loadInfo = async () => {
-    const list = await dockerServices.getContainerInformation(
-      new Map(containers)
-    );
-    setContainers(list);
-  };
-
-  useEffect(() => {
-    loadInfo();
-  }, [refresh]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setRefresh(refresh + 1);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const onSelected = (serviceName: string) => {
-    const updatedContainers = new Map(containers);
-    const containerInfo = updatedContainers.get(serviceName);
-    if (containerInfo) {
-      containerInfo.Selected = !containerInfo.Selected;
-    }
-    setContainers(updatedContainers);
-  };
-
-  const onAllSelected = (selectedState: boolean) => {
-    const updatedContainers = new Map<string, ContainerInformation>();
-
-    containers.forEach((value, key) => {
-      const info = value;
-      info.Selected = selectedState;
-      updatedContainers.set(key, info);
+export default function ServicesView({
+  view,
+  environment,
+  environmentConfigPath
+}: Props) {
+  if (view === ServiceViews.GROUPED) {
+    const serviceLists = environment.files.map(f => {
+      const dockerServices = getDockerServices([f], environmentConfigPath);
+      return (
+        <DockerActionsWrapper
+          key={f.filePath}
+          view={view}
+          listName={f.name}
+          dockerServices={dockerServices}
+          environmentConfigPath={environmentConfigPath}
+        />
+      );
     });
 
-    setContainers(updatedContainers);
-  };
+    return serviceLists;
+  }
 
-  const onStartStop = async (service: ContainerInformation) => {
-    if (service.Status === ContainerStatus.Stopped) {
-      await dockerServices.startService(service.Name);
-      return;
-    }
+  if (view === ServiceViews.A_TO_Z) {
+    const dockerServices = getDockerServices(
+      environment.files,
+      environmentConfigPath
+    );
+    return (
+      <DockerActionsWrapper
+        view={view}
+        listName="A to Z of services"
+        dockerServices={dockerServices}
+        environmentConfigPath={environmentConfigPath}
+      />
+    );
+  }
 
-    await dockerServices.stopService(service.Name);
-  };
-
-  const onStartAll = async () => {
-    dockerServices.startServices(Array.from(containers.keys()));
-  };
-
-  const onStopAll = async () => {
-    dockerServices.stopServices(Array.from(containers.keys()));
-  };
-
-  const onRefresh = () => {
-    setRefresh(refresh + 1);
-  };
-
-  return (
-    <Paper>
-      <ExpansionPanel>
-        <ExpansionPanelSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="docker-services"
-          id="docker-services-header"
-        >
-          <ServiceBar
-            name={dockerCompose.Name}
-            onStartAllClicked={onStartAll}
-            onStopAllClicked={onStopAll}
-            onRefreshClicked={onRefresh}
-            onSelectAllClicked={onAllSelected}
-            containers={containers}
-          />
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <List
-            component="nav"
-            aria-label="docker-services"
-            className={classes.flexContainer}
-          >
-            {Array.from(containers.values()).map(service => (
-              <ServiceListItem
-                key={service.Name}
-                containerInfo={service}
-                checked={service.Selected}
-                onSelected={onSelected}
-                onStartStopClicked={onStartStop}
-              />
-            ))}
-          </List>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-    </Paper>
-  );
+  return <div>No view available</div>;
 }
