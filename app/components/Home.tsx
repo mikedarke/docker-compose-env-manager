@@ -20,8 +20,8 @@ export default function Home() {
   const onLoadEnvironment = () => {
     const cfg = new EnvironmentConfigFile();
     cfg.loadEnvironment(
-      (environment: EnvironmentDefinition, cfgPath: string) => {
-        setEnvironment(environment);
+      (loadedEnvironment: EnvironmentDefinition, cfgPath: string) => {
+        setEnvironment(loadedEnvironment);
         setConfigPath(cfgPath);
         history.push(routes.SERVICES);
       }
@@ -43,11 +43,11 @@ export default function Home() {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" href="#contained-buttons">
-            <Link to={routes.ENVIRONMENT}>Create new evironment</Link>
+          <Button variant="contained" color="primary">
+            <Link to={routes.CREATE_ENVIRONMENT}>Create new evironment</Link>
           </Button>
         </Grid>
-        {environment !== null ? (
+        {environment !== null && environment.files.length > 0 ? (
           <Grid item xs={12}>
             <Button
               variant="contained"

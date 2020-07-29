@@ -48,7 +48,7 @@ export default function ServicesView({
       );
     });
 
-    return serviceLists;
+    return <div>{serviceLists}</div>;
   }
 
   if (view === ServiceViews.A_TO_Z) {

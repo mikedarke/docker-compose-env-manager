@@ -1,5 +1,7 @@
 export default {
   HOME: '/',
-  SERVICES: '/services',
-  ENVIRONMENT: '/environment'
+  ENVIRONMENT: '/environment',
+  SERVICES: '/environment/services',
+  LOGS: '/environment/logs',
+  CREATE_ENVIRONMENT: '/create-environment'
 };

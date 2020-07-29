@@ -1,16 +1,12 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
-import { createBrowserHistory } from 'history';
 import { hot } from 'react-hot-loader/root';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Routes from '../Routes';
 import MainAppBar from '../components/MainAppBar';
 import RootProvider from '../contexts/RootProvider';
-import Theme from './Theme';
-
-const history = createBrowserHistory();
+import Theme from '../Theme';
 
 const useStyles = makeStyles(() =>
   createStyles({

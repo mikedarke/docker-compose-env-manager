@@ -8,13 +8,10 @@ import ServiceViews from '../components/ServiceList/ServiceViews';
 export default function ServicesPage() {
   const { environment, configPath } = useEnvironmentContext();
   const [view, setView] = useState(ServiceViews.GROUPED);
-  console.log('Using environment: ', environment);
-  const title = `Environment - ${environment.name}`;
 
   return (
     <Grid container xs={12} spacing={3}>
       <Grid item xs={12} sm={12}>
-        <h2>{title}</h2>
         <Button
           disabled={view === ServiceViews.GROUPED}
           onClick={() => setView(ServiceViews.GROUPED)}

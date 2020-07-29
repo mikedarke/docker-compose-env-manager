@@ -38,7 +38,6 @@ export default function Environment() {
   };
 
   const onSaveEnvironment = () => {
-    console.log('Save', environment);
     saveEnvironment(environment, () => {
       history.push(routes.SERVICES);
     });

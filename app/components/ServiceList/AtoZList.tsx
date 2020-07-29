@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Paper,
-  List,
-  Typography,
-  Container,
-  TextField,
-  Grid
-} from '@material-ui/core';
+import { Paper, List, Typography, TextField, Grid } from '@material-ui/core';
 import ServiceListItem from './ServiceListItem';
 import { ServiceListProps } from './types';
 import ContainerInformation from '../../lib/docker-compose/ContainerInformation';
@@ -32,8 +25,8 @@ export default function AtoZList(props: ServiceListProps) {
   }
 
   return (
-    <Grid spacing={3}>
-      <Grid xs={12}>
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
         <TextField
           id="service-filter"
           label="Filter containers"
@@ -42,7 +35,7 @@ export default function AtoZList(props: ServiceListProps) {
           onChange={onFilterChange}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid item xs={12}>
         <List component="nav" aria-label="docker-services">
           {containersList
             .filter(filterByName)
